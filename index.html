@@ -1784,35 +1784,42 @@
             <div style="width:42px;"></div>
         </div>
         <div class="pantalla-perfil-body">
-            <img class="pantalla-avatar-grande" id="pantallaAvatar" src=""
-                 alt="Foto de perfil" onclick="elegirFotoGaleria()"
-                 onerror="this.src='data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'110\' height=\'110\'><rect width=\'110\' height=\'110\' fill=\'%23eee\' rx=\'55\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-size=\'48\' fill=\'%23bbb\'>👤</text></svg>')">
-            <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none" onchange="aplicarFotoPerfil(event)">
-            <p class="pantalla-usuario-nombre" id="pantallaUsuarioNombre">Invitado</p>
 
-            <button class="btn-opcion-perfil" onclick="elegirFotoGaleria()">
-                <span class="op-icono">🖼️</span>
-                <div>
-                    Cambiar foto de perfil
-                    <span class="op-sub">Elige una imagen desde tu galería</span>
-                </div>
-            </button>
+            <!-- ═══ Estado: SIN sesión iniciada ═══ -->
+            <div id="pantallaPerfilInvitado" style="display:none;text-align:center;padding:24px 0;">
+                <p style="font-size:16px;color:#666;margin-bottom:24px;">
+                    Inicia sesión con tu cuenta de Google para personalizar tu perfil y dejar comentarios.
+                </p>
+                <button class="btn-opcion-perfil" onclick="iniciarSesionGoogle()" style="justify-content:center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="margin-right:8px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Iniciar sesión con Google
+                </button>
+            </div>
 
-            <button class="btn-opcion-perfil" onclick="alert('Cambio de nombre de usuario — próximamente con Firebase.')">
-                <span class="op-icono">✏️</span>
-                <div>
-                    Nombre de usuario
-                    <span class="op-sub">Modifica cómo aparece tu nombre</span>
-                </div>
-            </button>
+            <!-- ═══ Estado: CON sesión iniciada ═══ -->
+            <div id="pantallaPerfilUsuario" style="display:none;">
+                <img class="pantalla-avatar-grande" id="pantallaAvatar" src=""
+                     alt="Foto de perfil"
+                     onerror="this.src='data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'110\' height=\'110\'><rect width=\'110\' height=\'110\' fill=\'%23eee\' rx=\'55\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-size=\'48\' fill=\'%23bbb\'>👤</text></svg>')">
+                <p class="pantalla-usuario-nombre" id="pantallaUsuarioNombre">Usuario</p>
 
-            <button class="btn-opcion-perfil" onclick="alert('Cambio de contraseña — próximamente con Firebase.')">
-                <span class="op-icono">🔒</span>
-                <div>
-                    Contraseña
-                    <span class="op-sub">Actualiza tu contraseña de acceso</span>
-                </div>
-            </button>
+                <button class="btn-opcion-perfil" onclick="cambiarNombreUsuario()">
+                    <span class="op-icono">✏️</span>
+                    <div>
+                        Nombre de usuario
+                        <span class="op-sub">Modifica cómo aparece tu nombre</span>
+                    </div>
+                </button>
+
+                <button class="btn-opcion-perfil" onclick="cerrarSesionGoogle()">
+                    <span class="op-icono">🚪</span>
+                    <div>
+                        Cerrar sesión
+                        <span class="op-sub">Tu cuenta de Google sigue protegida por Google</span>
+                    </div>
+                </button>
+            </div>
+
         </div>
     </div>
 
@@ -1824,20 +1831,31 @@
 
         <!-- Cabecera -->
         <div class="drawer-header">
-            <span class="drawer-header-titulo">🏺 Yesos Polo</span>
+            <span class="drawer-header-titulo" id="drawerHeaderTitulo">Inicia Sesión</span>
             <button class="btn-cerrar-drawer" onclick="cerrarDrawer()">✕</button>
         </div>
 
-        <!-- Perfil -->
-        <div class="drawer-perfil" onclick="abrirPantallaPerfil()">
+        <!-- Perfil (usuario con sesión iniciada) -->
+        <div class="drawer-perfil" id="drawerPerfilLogueado" onclick="abrirPantallaPerfil()" style="display:none;">
             <img class="drawer-avatar" id="drawerAvatar" src="" alt="Perfil"
                  onerror="this.src='data:image/svg+xml,' + encodeURIComponent('<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\'><rect width=\'48\' height=\'48\' fill=\'%23ddd\' rx=\'24\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-size=\'22\' fill=\'%23aaa\'>👤</text></svg>')">
             <div class="drawer-perfil-info">
-                <p class="drawer-perfil-nombre" id="drawerNombreUsuario">Invitado</p>
+                <p class="drawer-perfil-nombre" id="drawerNombreUsuario">Usuario</p>
                 <p class="drawer-perfil-sub">Toca para editar tu perfil</p>
             </div>
             <span class="drawer-perfil-flecha">›</span>
         </div>
+
+        <!-- Botón de inicio de sesión (sin sesión iniciada) -->
+        <button class="drawer-perfil" id="btnLoginDrawer" onclick="iniciarSesionGoogle()" style="display:flex;width:100%;background:none;border:none;cursor:pointer;text-align:left;">
+            <span style="width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            </span>
+            <div class="drawer-perfil-info">
+                <p class="drawer-perfil-nombre">Iniciar sesión con Google</p>
+                <p class="drawer-perfil-sub">Accede para personalizar tu perfil</p>
+            </div>
+        </button>
 
         <!-- Resultados / recomendaciones -->
         <div class="drawer-espaciador"></div>
@@ -2168,51 +2186,14 @@
         //  PANTALLA PERFIL COMPLETA
         // ═══════════════════════════════════════════════
         function abrirPantallaPerfil() {
-            // Sincronizar avatar y nombre
-            const foto = localStorage.getItem('fotoPerfil');
-            if (foto) {
-                document.getElementById('pantallaAvatar').src = foto;
-            }
-            document.getElementById('pantallaUsuarioNombre').textContent =
-                localStorage.getItem('nombreUsuario') || 'Invitado';
             document.getElementById('pantallaPerfil').classList.add('activo');
         }
         function cerrarPantallaPerfil() {
             document.getElementById('pantallaPerfil').classList.remove('activo');
         }
-
-        // ═══════════════════════════════════════════════
-        //  DRAWER — FOTO DE PERFIL
-        // ═══════════════════════════════════════════════
-        function elegirFotoGaleria() {
-            document.getElementById('inputFotoPerfil').click();
-        }
-        function aplicarFotoPerfil(event) {
-            const archivo = event.target.files[0];
-            if (!archivo) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                const src = e.target.result;
-                document.getElementById('drawerAvatar').src = src;
-                document.getElementById('pantallaAvatar').src = src;
-                localStorage.setItem('fotoPerfil', src);
-            };
-            reader.readAsDataURL(archivo);
-        }
-
-        // Recuperar foto y nombre al cargar
-        window.addEventListener('DOMContentLoaded', () => {
-            const foto = localStorage.getItem('fotoPerfil');
-            if (foto) {
-                document.getElementById('drawerAvatar').src = foto;
-                document.getElementById('pantallaAvatar').src = foto;
-            }
-            const nombre = localStorage.getItem('nombreUsuario');
-            if (nombre) {
-                document.getElementById('drawerNombreUsuario').textContent = nombre;
-                document.getElementById('pantallaUsuarioNombre').textContent = nombre;
-            }
-        });
+        // El resto de la lógica de sesión (Google Sign-In, Firestore, avatar,
+        // nombre de usuario) se controla desde el bloque de Firebase al final
+        // del documento, mediante onAuthStateChanged.
         function abrirModal(modalId) {
             scrollYGuardado = window.scrollY;
             document.body.style.top = `-${scrollYGuardado}px`;
@@ -3329,13 +3310,26 @@
     }
     </script>
 
-    <!-- ═══ FIREBASE — INICIALIZACIÓN ═══ -->
+    <!-- ═══ FIREBASE — INICIALIZACIÓN, AUTENTICACIÓN Y PERFIL ═══ -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -3352,6 +3346,116 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const proveedorGoogle = new GoogleAuthProvider();
+
+        // ═══════════════════════════════════════════════
+        //  INICIAR / CERRAR SESIÓN CON GOOGLE
+        //  (la contraseña SIEMPRE vive solo en la cuenta de
+        //  Google del usuario; este sitio nunca la ve ni la
+        //  guarda en ninguna base de datos)
+        // ═══════════════════════════════════════════════
+        window.iniciarSesionGoogle = async function () {
+            try {
+                const resultado = await signInWithPopup(auth, proveedorGoogle);
+                const usuario = resultado.user;
+                const refUsuario = doc(db, 'usuarios', usuario.uid);
+                const snap = await getDoc(refUsuario);
+                if (!snap.exists()) {
+                    // Primer inicio de sesión: creamos su documento de perfil
+                    await setDoc(refUsuario, {
+                        nombreUsuario: usuario.displayName || 'Usuario',
+                        fotoPerfil: usuario.photoURL || '',
+                        email: usuario.email || '',
+                        creadoEn: serverTimestamp()
+                    });
+                }
+            } catch (err) {
+                console.error('Error al iniciar sesión con Google:', err);
+                alert('No se pudo iniciar sesión con Google. Inténtalo de nuevo.');
+            }
+        };
+
+        window.cerrarSesionGoogle = async function () {
+            try {
+                await signOut(auth);
+                cerrarPantallaPerfil();
+                cerrarDrawer();
+            } catch (err) {
+                console.error('Error al cerrar sesión:', err);
+            }
+        };
+
+        // ═══════════════════════════════════════════════
+        //  CAMBIAR NOMBRE DE USUARIO (solo dentro del sitio,
+        //  se guarda en Firestore, NUNCA afecta la cuenta de
+        //  Google real del usuario)
+        // ═══════════════════════════════════════════════
+        window.cambiarNombreUsuario = async function () {
+            const usuario = auth.currentUser;
+            if (!usuario) return;
+            const actual = document.getElementById('pantallaUsuarioNombre').textContent;
+            const nuevo = prompt('Nuevo nombre de usuario:', actual);
+            if (!nuevo || !nuevo.trim() || nuevo.trim() === actual) return;
+            const nombreLimpio = nuevo.trim().slice(0, 40);
+            try {
+                await updateDoc(doc(db, 'usuarios', usuario.uid), {
+                    nombreUsuario: nombreLimpio
+                });
+                actualizarUIPerfil({ nombreUsuario: nombreLimpio, fotoPerfil: usuario.photoURL || '' });
+            } catch (err) {
+                console.error('Error al actualizar el nombre de usuario:', err);
+                alert('No se pudo actualizar tu nombre de usuario.');
+            }
+        };
+
+        // ═══════════════════════════════════════════════
+        //  ACTUALIZAR INTERFAZ SEGÚN EL ESTADO DE SESIÓN
+        // ═══════════════════════════════════════════════
+        function actualizarUIPerfil(datos) {
+            const nombre = datos.nombreUsuario || 'Usuario';
+            const foto = datos.fotoPerfil || '';
+            document.getElementById('drawerNombreUsuario').textContent = nombre;
+            document.getElementById('pantallaUsuarioNombre').textContent = nombre;
+            document.getElementById('drawerHeaderTitulo').textContent = nombre;
+            if (foto) {
+                document.getElementById('drawerAvatar').src = foto;
+                document.getElementById('pantallaAvatar').src = foto;
+            }
+        }
+
+        onAuthStateChanged(auth, async (usuario) => {
+            const drawerLogueado   = document.getElementById('drawerPerfilLogueado');
+            const btnLoginDrawer   = document.getElementById('btnLoginDrawer');
+            const perfilInvitado   = document.getElementById('pantallaPerfilInvitado');
+            const perfilUsuario    = document.getElementById('pantallaPerfilUsuario');
+            const drawerHeaderTitulo = document.getElementById('drawerHeaderTitulo');
+
+            if (usuario) {
+                // Sesión iniciada
+                drawerLogueado.style.display = 'flex';
+                btnLoginDrawer.style.display = 'none';
+                perfilInvitado.style.display = 'none';
+                perfilUsuario.style.display  = 'block';
+
+                let datos = { nombreUsuario: usuario.displayName, fotoPerfil: usuario.photoURL };
+                try {
+                    const snap = await getDoc(doc(db, 'usuarios', usuario.uid));
+                    if (snap.exists()) datos = snap.data();
+                } catch (err) {
+                    console.error('No se pudo leer el perfil de Firestore:', err);
+                }
+                actualizarUIPerfil(datos);
+            } else {
+                // Sin sesión iniciada
+                drawerLogueado.style.display = 'none';
+                btnLoginDrawer.style.display = 'flex';
+                perfilInvitado.style.display = 'block';
+                perfilUsuario.style.display  = 'none';
+                drawerHeaderTitulo.textContent = 'Inicia Sesión';
+            }
+        });
     </script>
 
 </body>
