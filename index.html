@@ -2969,15 +2969,6 @@
             modal.style.display = 'flex';
         }
 
-        function toggleBiografia() {
-            const zona = document.getElementById('zona-biografia');
-            const btn  = document.getElementById('btn-biografia');
-            const visible = zona.style.display === 'block';
-            zona.style.display = visible ? 'none' : 'block';
-            btn.style.background  = visible ? '#222' : '#fe2c55';
-            btn.style.borderColor = visible ? '#222' : '#fe2c55';
-        }
-
         function onClickOverlayProducto(e) {
             if (e.target.id === 'modalProducto') {
                 document.getElementById('mpTrack').innerHTML = '';
