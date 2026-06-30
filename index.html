@@ -1807,7 +1807,7 @@
 
         </style>
 </head>
-<body class="modo-oscuro">
+<body>
 
     <!-- ══ BOTÓN ABRIR DRAWER ══ -->
     <button class="btn-abrir-drawer" onclick="abrirDrawer()" aria-label="Abrir menú">☰</button>
@@ -2122,6 +2122,23 @@
         </div>
     </div>
 
+    <!-- ═══ MODAL INFO PROYECTO ═══ -->
+    <div id="modalProyecto" class="modal" onclick="if(event.target.id==='modalProyecto') cerrarModal('modalProyecto')">
+        <div class="modal-producto-contenido" onclick="event.stopPropagation()" style="max-width:480px;">
+            <button class="mp-cerrar" onclick="cerrarModal('modalProyecto')">✕</button>
+            <div class="mp-galeria" style="height:auto;max-height:260px;overflow:hidden;border-radius:12px;">
+                <img id="proyectoModalImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+            <div class="mp-info">
+                <h2 class="mp-nombre" id="proyectoModalTitulo"></h2>
+                <p class="mp-descripcion" id="proyectoModalDescripcion" style="display:block;"></p>
+                <div class="mp-botones">
+                    <a id="proyectoModalLink" href="#" target="_blank" rel="noopener" class="btn-mp-compartir" style="width:100%;text-align:center;text-decoration:none;display:block;">🔗 Visitar proyecto</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══ MODAL OPCIONES DE COMPRA ═══ -->
     <div id="modalCompra" class="modal" onclick="if(event.target.id==='modalCompra') cerrarModal('modalCompra')">
         <div class="modal-contenido" onclick="event.stopPropagation()">
@@ -2222,9 +2239,9 @@
 
         // Recordar preferencia de modo oscuro
         window.addEventListener('DOMContentLoaded', () => {
-            // Modo oscuro predeterminado: activo a menos que el usuario haya elegido explícitamente claro
+            // Modo oscuro predeterminado: inactivo a menos que el usuario lo haya activado explícitamente
             const guardado = localStorage.getItem('modoOscuro');
-            const oscuro = guardado === null ? true : guardado === 'true';
+            const oscuro = guardado === null ? false : guardado === 'true';
             if (oscuro) {
                 document.body.classList.add('modo-oscuro');
                 document.getElementById('toggleOscuro').classList.add('activo');
@@ -2538,7 +2555,7 @@
         const SHEET_ID_VIDEOS  = '1W1yux5rQaNlPjufGy2OFQQJxoXtDaXeSgeQTywoxpu4';
         const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Videos`;
 
-        // Columnas esperadas en Sheet2 (Proyectos): Titulo | Descripcion | Imagen | Link
+        // Columnas esperadas en Sheet2 (Proyectos): Titulo | Imagen (Cloudinary) | Descripcion | Link
         const SHEET_URL_PROYECTOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Proyectos`;
 
         // Parser de CSV con detección automática de delimitador (tabulador o coma)
@@ -2799,6 +2816,7 @@
         //  PROYECTOS — GOOGLE SHEETS (Sheet2)
         // ═══════════════════════════════════════════════
         // Columnas esperadas en Sheet2: Titulo | Descripcion | Imagen | Link
+        // Columnas esperadas en Sheet2: Titulo | Imagen (Cloudinary) | Descripcion | Link
         let proyectosCargados = false;
         async function cargarProyectosDesdeSheet() {
             if (proyectosCargados) return;
@@ -2814,8 +2832,8 @@
 
                 const proyectos = datos.map(f => ({
                     titulo:      (f[0] || '').trim(),
-                    descripcion: (f[1] || '').trim(),
-                    imagen:      (f[2] || '').trim(),
+                    imagen:      (f[1] || '').trim(),
+                    descripcion: (f[2] || '').trim(),
                     link:        (f[3] || '').trim()
                 }));
 
@@ -2843,8 +2861,8 @@
                         </div>
                         <div class="producto-card-hint">${p.link ? 'Toca para ver el proyecto' : ''}</div>
                     `;
-                    if (p.link) {
-                        card.onclick = function () { window.open(p.link, '_blank', 'noopener'); };
+                    if (p.link || p.descripcion || p.imagen) {
+                        card.onclick = function () { abrirModalProyecto(p); };
                     }
                     grilla.appendChild(card);
                 });
@@ -2857,6 +2875,37 @@
                     msgVacio.style.display = 'block';
                 }
             }
+        }
+
+        function abrirModalProyecto(p) {
+            const modal = document.getElementById('modalProyecto');
+            const img   = document.getElementById('proyectoModalImg');
+            const tit   = document.getElementById('proyectoModalTitulo');
+            const desc  = document.getElementById('proyectoModalDescripcion');
+            const link  = document.getElementById('proyectoModalLink');
+            if (!modal) return;
+
+            if (p.imagen) {
+                img.src = p.imagen;
+                img.style.display = 'block';
+                img.onerror = () => { img.style.display = 'none'; };
+            } else {
+                img.style.display = 'none';
+            }
+
+            tit.textContent  = p.titulo || 'Proyecto';
+            desc.textContent = p.descripcion || '';
+            desc.style.display = p.descripcion ? 'block' : 'none';
+
+            if (p.link) {
+                link.href = p.link;
+                link.style.display = 'block';
+            } else {
+                link.style.display = 'none';
+            }
+
+            modal.classList.add('activo');
+            modal.style.display = 'flex';
         }
 
         function toggleBiografia() {
