@@ -593,11 +593,15 @@
 
         /* TARJETA DE PRODUCTO — toda la card es clickeable */
         .producto-card {
-            background-color: white;
+            background-color: #181a30;
+            background-image:
+                radial-gradient(circle at 15% 0%, rgba(255, 130, 180, 0.22) 0%, transparent 60%),
+                radial-gradient(circle at 85% 100%, rgba(90, 140, 230, 0.24) 0%, transparent 60%),
+                linear-gradient(160deg, #1c1d36 0%, #181a30 55%, #14152c 100%);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.07);
-            border: 1px solid #e0e0e0;
+            border: 1px solid #3a3a5a;
             display: flex;
             flex-direction: column;
             cursor: pointer;
@@ -1990,7 +1994,7 @@
 
                 <!-- Banner / Botón hacia El Polo Network -->
                 <a href="https://elpologr.github.io/elpolo/" target="_blank" rel="noopener" style="display:block;max-width:480px;margin:24px auto 0 auto;border-radius:18px;overflow:hidden;border:3px solid #fe2c55;box-shadow:0 8px 24px rgba(0,0,0,0.18);cursor:pointer;transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.015)';this.style.boxShadow='0 10px 28px rgba(0,0,0,0.28)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.18)'">
-                    <img src="imagenes/bannerweb.webp" alt="El Polo Network - Desarrollo Web" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('a').style.display='none'">
+                    <img src="imagenes/elpolonetworkbanner.webp" alt="El Polo Network - Desarrollo Web" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('a').style.display='none'">
                 </a>
 
                 <!-- Barra Seguir Viendo (Desarrollo Web) -->
@@ -2019,8 +2023,8 @@
 
         <!-- ====== SECCIÓN PROYECTOS ====== -->
         <div id="seccion-proyectos" style="display:none; margin-bottom:40px;">
-            <div class="grilla-productos" style="grid-template-columns: repeat(2,1fr); gap:16px;">
-
+            <div class="grilla-productos" id="grilla-proyectos" style="grid-template-columns: repeat(2,1fr); gap:16px;">
+                <p id="mensaje-vacio-proyectos" style="display:none;grid-column:1/-1;text-align:center;padding:40px;color:#bbb;">No hay proyectos disponibles por el momento.</p>
             </div>
         </div><!-- /seccion-proyectos -->
     </div>
@@ -2377,6 +2381,7 @@
                 btnProy.style.background  = '#fe2c55';
                 btnProy.style.borderColor = '#fe2c55';
                 btnProy.style.color       = '#fff';
+                cargarProyectosDesdeSheet();
             }
         }
 
@@ -2573,8 +2578,11 @@
         //  VIDEOS — GOOGLE SHEETS (zona de Videos)
         // ═══════════════════════════════════════════════
         // Columnas esperadas en la hoja: Titulo | Descripcion | Fecha | Link youtube | enbeed facebook | enbeed instagram
-        const SHEET_ID_VIDEOS  = '1-WmG7Xp0hus6InSJ8tLQpcietG2t8zAt7A9b9zk_Vzc';
-        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv`;
+        const SHEET_ID_VIDEOS  = '1W1yux5rQaNlPjufGy2OFQQJxoXtDaXeSgeQTywoxpu4';
+        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+
+        // Columnas esperadas en Sheet2 (Proyectos): Titulo | Descripcion | Imagen | Link
+        const SHEET_URL_PROYECTOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Sheet2`;
 
         // Parser de CSV con detección automática de delimitador (tabulador o coma)
         function parsearCSVVideos(texto) {
@@ -2829,6 +2837,70 @@
         }
 
         window.addEventListener('DOMContentLoaded', cargarVideosDesdeSheet);
+
+        // ═══════════════════════════════════════════════
+        //  PROYECTOS — GOOGLE SHEETS (Sheet2)
+        // ═══════════════════════════════════════════════
+        // Columnas esperadas en Sheet2: Titulo | Descripcion | Imagen | Link
+        let proyectosCargados = false;
+        async function cargarProyectosDesdeSheet() {
+            if (proyectosCargados) return;
+            const grilla   = document.getElementById('grilla-proyectos');
+            const msgVacio = document.getElementById('mensaje-vacio-proyectos');
+            if (!grilla) return;
+            try {
+                const resp = await fetch(SHEET_URL_PROYECTOS + '&t=' + Date.now());
+                if (!resp.ok) throw new Error('No se pudo leer la hoja de proyectos');
+                const texto = await resp.text();
+                const filas = parsearCSVVideos(texto);
+                const datos = filas.slice(1).filter(f => (f[0] || '').trim() !== '' || (f[3] || '').trim() !== '');
+
+                const proyectos = datos.map(f => ({
+                    titulo:      (f[0] || '').trim(),
+                    descripcion: (f[1] || '').trim(),
+                    imagen:      (f[2] || '').trim(),
+                    link:        (f[3] || '').trim()
+                }));
+
+                grilla.querySelectorAll('.producto-card').forEach(c => c.remove());
+
+                if (!proyectos.length) {
+                    if (msgVacio) msgVacio.style.display = 'block';
+                    return;
+                }
+                if (msgVacio) msgVacio.style.display = 'none';
+
+                proyectos.forEach((p, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'producto-card';
+                    card.id = 'proyecto-' + (i + 1);
+
+                    const miniatura = p.imagen
+                        ? `<img class="producto-img" src="${p.imagen}" alt="${escaparHTMLVideo(p.titulo)}" onerror="this.style.background='#181a30'">`
+                        : `<div class="producto-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fe2c55,#6b4f8a);color:#fff;font-size:14px;font-weight:700;text-align:center;padding:10px;">${escaparHTMLVideo(p.titulo) || 'Proyecto'}</div>`;
+
+                    card.innerHTML = `
+                        ${miniatura}
+                        <div class="producto-info">
+                            <h3 class="producto-titulo">${escaparHTMLVideo(p.titulo)}</h3>
+                        </div>
+                        <div class="producto-card-hint">${p.link ? 'Toca para ver el proyecto' : ''}</div>
+                    `;
+                    if (p.link) {
+                        card.onclick = function () { window.open(p.link, '_blank', 'noopener'); };
+                    }
+                    grilla.appendChild(card);
+                });
+
+                proyectosCargados = true;
+            } catch (err) {
+                console.error('No se pudieron cargar los proyectos desde Google Sheets:', err);
+                if (msgVacio) {
+                    msgVacio.textContent = 'No se pudieron cargar los proyectos. Intenta de nuevo más tarde.';
+                    msgVacio.style.display = 'block';
+                }
+            }
+        }
 
         function toggleBiografia() {
             const zona = document.getElementById('zona-biografia');
