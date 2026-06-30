@@ -2023,7 +2023,7 @@
 
         <!-- ====== SECCIÓN PROYECTOS ====== -->
         <div id="seccion-proyectos" style="display:none; margin-bottom:40px;">
-            <div class="grilla-productos" id="grilla-proyectos" style="grid-template-columns: repeat(2,1fr); gap:16px;">
+            <div class="grilla-productos" id="grilla-proyectos" style="grid-template-columns: 1fr; gap:16px;">
                 <p id="mensaje-vacio-proyectos" style="display:none;grid-column:1/-1;text-align:center;padding:40px;color:#bbb;">No hay proyectos disponibles por el momento.</p>
             </div>
         </div><!-- /seccion-proyectos -->
@@ -2579,10 +2579,10 @@
         // ═══════════════════════════════════════════════
         // Columnas esperadas en la hoja: Titulo | Descripcion | Fecha | Link youtube | enbeed facebook | enbeed instagram
         const SHEET_ID_VIDEOS  = '1W1yux5rQaNlPjufGy2OFQQJxoXtDaXeSgeQTywoxpu4';
-        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Videos`;
 
         // Columnas esperadas en Sheet2 (Proyectos): Titulo | Descripcion | Imagen | Link
-        const SHEET_URL_PROYECTOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Sheet2`;
+        const SHEET_URL_PROYECTOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Proyectos`;
 
         // Parser de CSV con detección automática de delimitador (tabulador o coma)
         function parsearCSVVideos(texto) {
