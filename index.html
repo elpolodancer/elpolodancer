@@ -31,16 +31,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #2a1530;
-            background-image:
-                radial-gradient(circle at 12% 18%, rgba(190, 60, 95, 0.38) 0%, transparent 50%),
-                radial-gradient(circle at 88% 12%, rgba(130, 55, 165, 0.38) 0%, transparent 52%),
-                radial-gradient(circle at 80% 85%, rgba(170, 45, 80, 0.34) 0%, transparent 55%),
-                radial-gradient(circle at 15% 88%, rgba(110, 50, 140, 0.34) 0%, transparent 55%),
-                linear-gradient(155deg, #321a3a 0%, #3a1730 28%, #2e1432 55%, #3a1626 75%, #2a1228 100%);
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-size: cover;
+            background-color: #c890d8; /* fallback mientras cargan las capas */
             color: var(--color-texto-medio);
         }
         
@@ -1152,6 +1143,72 @@
         body.modo-oscuro .btn-pagina { background: #1e1e1e; border-color: #444; color: #ccc; }
         body.modo-oscuro .btn-pagina.activo { background: #fe2c55; border-color: #fe2c55; color: white; }
 
+        /* ── BOTONES DE NAVEGACIÓN PRINCIPAL (Bio / Videos / Proyectos) ── */
+        .nav-seccion-btn {
+            padding: 20px 56px;
+            border-radius: 0;
+            border: 2px solid #fe2c55;
+            background: #fff;
+            color: #222;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .nav-seccion-btn:hover:not(.activo) {
+            background: #fe2c55;
+            border-color: #fe2c55;
+            color: #fff;
+        }
+        .nav-seccion-btn.activo {
+            background: #fe2c55;
+            border-color: #fe2c55;
+            color: #fff;
+        }
+        .nav-seccion-btn.activo:hover { background: #d81f43; border-color: #d81f43; }
+        @media (max-width: 700px) {
+            .nav-seccion-btn { padding: 10px 18px; font-size: 13px; }
+        }
+
+        /* ── FONDO ANIMADO POR SECCIÓN ── */
+        #fondo-animado {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .fondo-capa {
+            position: absolute;
+            inset: 0;
+            background-size: 400% 400%;
+            animation: fondoDesplazar 16s ease infinite;
+            opacity: 0;
+            transition: opacity 1.1s ease;
+        }
+        .fondo-capa.activa { opacity: 1; }
+        #fondo-bio {
+            background: linear-gradient(-45deg,
+                #b880d0, #e890c0, #9e72c8, #e0a0d0,
+                #c890d8, #f0a8cc, #a878c4, #dca0dc);
+        }
+        #fondo-videos {
+            background: linear-gradient(-45deg,
+                #7aace0, #e87878, #8ec0f0, #e89090,
+                #8ab4ec, #e88888, #90c0f4, #e07878);
+        }
+        #fondo-proyectos {
+            background: linear-gradient(-45deg,
+                #f090b0, #e87878, #f0a8c0, #ec8888,
+                #f4a0bc, #e88080, #f0b0c8, #ec9090);
+        }
+        @keyframes fondoDesplazar {
+            0%   { background-position: 0% 50%; }
+            25%  { background-position: 100% 20%; }
+            50%  { background-position: 100% 100%; }
+            75%  { background-position: 0% 80%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* ── BÚSQUEDA DEL CATÁLOGO ── */
         .busqueda-catalogo {
             margin: 0 auto 18px;
@@ -1808,6 +1865,12 @@
         </style>
 </head>
 <body>
+    <!-- Fondo animado por sección -->
+    <div id="fondo-animado" aria-hidden="true">
+        <div class="fondo-capa activa" id="fondo-bio"></div>
+        <div class="fondo-capa" id="fondo-videos"></div>
+        <div class="fondo-capa" id="fondo-proyectos"></div>
+    </div>
 
     <!-- ══ BOTÓN ABRIR DRAWER ══ -->
     <button class="btn-abrir-drawer" onclick="abrirDrawer()" aria-label="Abrir menú">☰</button>
@@ -1984,9 +2047,9 @@
             </p>
 
             <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin:18px 0 40px 0;">
-                <button onclick="toggleBiografia()" id="btn-biografia" style="padding:20px 56px;border-radius:0;border:2px solid #fe2c55;background:#222;color:#fff;font-size:20px;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#fe2c55';this.style.borderColor='#fe2c55'" onmouseout="this.style.background='#222';this.style.borderColor='#fe2c55'">Biografía</button>
-                <button id="btn-musica" style="padding:20px 56px;border-radius:0;border:2px solid #fe2c55;background:#fff;color:#222;font-size:20px;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#fe2c55';this.style.borderColor='#fe2c55';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.borderColor='#fe2c55';this.style.color='#222'" onclick="mostrarSeccionMusica()">Videos</button>
-                <button onclick="mostrarSeccion('proyectos')" id="btn-proyectos" style="padding:20px 56px;border-radius:0;border:2px solid #fe2c55;background:#fff;color:#222;font-size:20px;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#fe2c55';this.style.borderColor='#fe2c55';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.borderColor='#fe2c55';this.style.color='#222'">Proyectos</button>
+                <button onclick="toggleBiografia()" id="btn-biografia" class="nav-seccion-btn">Biografía</button>
+                <button onclick="mostrarSeccionMusica()" id="btn-musica" class="nav-seccion-btn">Videos</button>
+                <button onclick="mostrarSeccion('proyectos')" id="btn-proyectos" class="nav-seccion-btn">Proyectos</button>
             </div>
 
         </div>
@@ -2311,42 +2374,40 @@
 
         // Función central que controla qué sección se muestra
         function mostrarSeccion(cual) {
-            const zona = document.getElementById('zona-biografia');
-            const sec  = document.getElementById('seccion-musica');
+            const zona    = document.getElementById('zona-biografia');
+            const sec     = document.getElementById('seccion-musica');
+            const secProy = document.getElementById('seccion-proyectos');
             const btnBio  = document.getElementById('btn-biografia');
             const btnMus  = document.getElementById('btn-musica');
             const btnProy = document.getElementById('btn-proyectos');
 
-            // Ocultar todo primero
+            // Ocultar todas las secciones
             zona.style.display = 'none';
             sec.style.display  = 'none';
-            const secProy = document.getElementById('seccion-proyectos');
             if (secProy) secProy.style.display = 'none';
 
-            // Restablecer estilos de los 3 botones
-            [btnBio, btnMus, btnProy].forEach(b => {
-                b.style.background   = '#fff';
-                b.style.borderColor  = '#222';
-                b.style.color        = '#222';
+            // Quitar clase activo de todos los botones
+            [btnBio, btnMus, btnProy].forEach(b => b.classList.remove('activo'));
+
+            // Cambiar fondo animado
+            ['bio', 'videos', 'proyectos'].forEach(id => {
+                const capa = document.getElementById('fondo-' + id);
+                if (capa) capa.classList.remove('activa');
             });
-            btnBio.style.background = '#fff';
+            const mapaCapa = { biografia: 'bio', musica: 'videos', proyectos: 'proyectos' };
+            const capaId = document.getElementById('fondo-' + (mapaCapa[cual] || 'bio'));
+            if (capaId) capaId.classList.add('activa');
 
             // Mostrar la sección elegida y marcar su botón activo
             if (cual === 'biografia') {
                 zona.style.display = 'block';
-                btnBio.style.background  = '#fe2c55';
-                btnBio.style.borderColor = '#fe2c55';
-                btnBio.style.color       = '#fff';
+                btnBio.classList.add('activo');
             } else if (cual === 'musica') {
                 sec.style.display = 'block';
-                btnMus.style.background  = '#fe2c55';
-                btnMus.style.borderColor = '#fe2c55';
-                btnMus.style.color       = '#fff';
+                btnMus.classList.add('activo');
             } else if (cual === 'proyectos') {
-                document.getElementById('seccion-proyectos').style.display = 'block';
-                btnProy.style.background  = '#fe2c55';
-                btnProy.style.borderColor = '#fe2c55';
-                btnProy.style.color       = '#fff';
+                if (secProy) secProy.style.display = 'block';
+                btnProy.classList.add('activo');
                 cargarProyectosDesdeSheet();
             }
         }
@@ -2379,7 +2440,7 @@
                 card.dataset.ytId        = v.id;
                 card.onclick = function () { abrirFichaProducto(card); };
                 card.innerHTML = `
-                    <img class="producto-img" src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="${v.titulo}" onerror="this.style.background='#111'">
+                    <img class="producto-img" src="https://img.youtube.com/vi/${v.id}/maxresdefault.jpg" alt="${v.titulo}" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg';this.onerror=null">
                     <div class="producto-info">
                         <h3 class="producto-titulo">${v.titulo}</h3>
                     </div>
@@ -2463,7 +2524,7 @@
 
                 track.innerHTML = `
                     <div class="mp-video-placeholder">
-                        ${card.dataset.ytId ? `<img src="https://img.youtube.com/vi/${card.dataset.ytId}/hqdefault.jpg" alt="">` : ''}
+                        ${card.dataset.ytId ? `<img src="https://img.youtube.com/vi/${card.dataset.ytId}/maxresdefault.jpg" alt="" onerror="this.src='https://img.youtube.com/vi/${card.dataset.ytId}/mqdefault.jpg';this.onerror=null">` : ''}
                         <div class="mp-video-play-icono">▶</div>
                     </div>`;
                 puntitos.innerHTML = '';
@@ -2496,8 +2557,8 @@
                     });
                     plataformasDiv.style.display = plataformas.length ? 'flex' : 'none';
 
-                    // Si solo hay una plataforma disponible, reproducir directo al presionar el placeholder
-                    if (plataformas.length === 1) {
+                    // Siempre hacer el placeholder clickeable; reproduce la primera plataforma disponible
+                    if (plataformas.length >= 1) {
                         track.querySelector('.mp-video-placeholder').onclick = () => reproducirVideoModal(plataformas[0].tipo, plataformas[0].embed);
                     }
                 }
@@ -2788,7 +2849,7 @@
 
                 let miniatura;
                 if (media.tipo === 'youtube' && media.youtubeId) {
-                    miniatura = `<img class="producto-img" src="https://img.youtube.com/vi/${media.youtubeId}/hqdefault.jpg" alt="${escaparHTMLVideo(v.titulo)}" onerror="this.style.background='#111'">`;
+                    miniatura = `<img class="producto-img" src="https://img.youtube.com/vi/${media.youtubeId}/maxresdefault.jpg" alt="${escaparHTMLVideo(v.titulo)}" onerror="this.src='https://img.youtube.com/vi/${media.youtubeId}/mqdefault.jpg';this.onerror=function(){this.style.background='#111'}">`;
                 } else if (media.tipo === 'facebook') {
                     miniatura = `<div class="producto-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1877F2,#0d3f8f);color:#fff;font-size:42px;">▶</div>`;
                 } else {
