@@ -790,12 +790,13 @@
         .mp-video-placeholder {
             position: relative;
             width: 100%;
-            min-height: 280px;
+            aspect-ratio: 16 / 9;
             background: #111;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            overflow: hidden;
         }
         .mp-video-placeholder img {
             position: absolute;
@@ -816,6 +817,63 @@
             justify-content: center;
             font-size: 26px;
         }
+
+        /* ── REPRODUCTOR (iframe) — mantiene la proporción real del video,
+             así nunca queda descuadrado ni deja franjas negras de más ── */
+        .mp-video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #111;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .mp-video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        .mp-video-wrapper.aspecto-16-9 { aspect-ratio: 16 / 9; }
+        .mp-video-wrapper.aspecto-9-16 { aspect-ratio: 9 / 16; max-height: 80vh; margin: 0 auto; }
+
+        /* ── COMENTARIOS PÚBLICOS DE VIDEO ── */
+        .mp-comentarios {
+            padding: 4px 20px 20px 20px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+        body.modo-oscuro .mp-comentarios { border-top-color: rgba(255,255,255,0.1); }
+        .mp-comentarios-titulo {
+            font-size: 16px;
+            margin: 16px 0 10px 0;
+        }
+        .mp-comentario-input {
+            width: 100%;
+            min-height: 60px;
+            max-height: 160px;
+            border-radius: 10px;
+            border: 1.5px solid #ddd;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+        body.modo-oscuro .mp-comentario-input { background: #1e1e1e; border-color: #444; color: #eee; }
+        .mp-lista-comentarios { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+        .mp-comentario-item { display: flex; gap: 10px; }
+        .mp-comentario-avatar {
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+            object-fit: cover; background: #ddd;
+        }
+        .mp-comentario-cuerpo { flex: 1; min-width: 0; }
+        .mp-comentario-nombre { font-weight: 700; font-size: 13.5px; }
+        .mp-comentario-texto { font-size: 14px; white-space: pre-wrap; word-break: break-word; margin-top: 2px; }
+        .mp-comentario-fecha { font-size: 11.5px; color: #888; margin-top: 2px; }
+        .mp-comentario-borrar {
+            border: none; background: none; color: #c00; font-size: 12px; cursor: pointer; padding: 2px 0;
+        }
+        .mp-comentarios-vacio { font-size: 13.5px; color: #888; margin-top: 8px; }
 
         /* ── BOTONES DE PLATAFORMA (YouTube / Facebook / Instagram) ── */
         .mp-plataformas-video {
@@ -1978,7 +2036,7 @@
 
                 <!-- Banner / Botón hacia El Polo Network -->
                 <a href="https://elpologr.github.io/elpolo/" target="_blank" rel="noopener" style="display:block;max-width:480px;margin:24px auto 0 auto;border-radius:18px;overflow:hidden;border:3px solid #fe2c55;box-shadow:0 8px 24px rgba(0,0,0,0.18);cursor:pointer;transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.015)';this.style.boxShadow='0 10px 28px rgba(0,0,0,0.28)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.18)'">
-                    <img src="imagenes/elpolonetworkbanner.webp" alt="El Polo Network - Desarrollo Web" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('a').style.display='none'">
+                    <img src="https://res.cloudinary.com/dwzlxnuld/image/upload/v1782804379/elpolonetworkbanner_hpeo8o.webp" alt="El Polo Network - Desarrollo Web" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('a').style.display='none'">
                 </a>
 
                 <!-- Barra Seguir Viendo (Desarrollo Web) -->
@@ -2041,6 +2099,25 @@
                 <div class="mp-botones">
                     <button class="btn-mp-compartir" id="btnMpCompartir" style="width:100%;">🔗 Compartir</button>
                 </div>
+            </div>
+
+            <!-- ═══ Comentarios públicos (solo aparece en videos) ═══ -->
+            <div class="mp-comentarios" id="mpComentarios" style="display:none;">
+                <h3 class="mp-comentarios-titulo">Comentarios</h3>
+
+                <!-- Formulario (solo visible con sesión iniciada) -->
+                <div id="mpComentarioForm" style="display:none;">
+                    <textarea id="mpComentarioTexto" class="mp-comentario-input" maxlength="500"
+                              placeholder="Escribe un comentario público..."></textarea>
+                    <button class="btn-mp-compartir" id="mpComentarioEnviar" onclick="enviarComentarioVideo()">Comentar</button>
+                </div>
+
+                <!-- Aviso (solo visible sin sesión iniciada) -->
+                <button id="mpComentarioLogin" class="btn-opcion-perfil" onclick="iniciarSesionGoogle()" style="display:none;justify-content:center;">
+                    Inicia sesión con Google para comentar
+                </button>
+
+                <div id="mpListaComentarios" class="mp-lista-comentarios"></div>
             </div>
         </div>
     </div>
@@ -2188,6 +2265,7 @@
                 if (track) track.innerHTML = '';
                 const plataformasDiv = document.getElementById('mpPlataformasVideo');
                 if (plataformasDiv) { plataformasDiv.innerHTML = ''; plataformasDiv.style.display = 'none'; }
+                if (typeof ocultarComentariosVideo === 'function') ocultarComentariosVideo();
             }
             document.getElementById(modalId).style.display = 'none';
             document.body.classList.remove('modal-abierto');
@@ -2331,6 +2409,9 @@
         function abrirFichaProducto(card) {
             productoActivo = card;
 
+            // Por defecto, ocultar comentarios (solo se muestran para videos)
+            if (typeof ocultarComentariosVideo === 'function') ocultarComentariosVideo();
+
             // Llenar info
             document.getElementById('mpNombre').textContent   = card.dataset.nombre;
 
@@ -2374,6 +2455,11 @@
                 document.getElementById('mpFlechaDer').classList.add('oculto');
                 galeriaImagenes = [];
 
+                // Mostrar y cargar los comentarios públicos de este video
+                if (typeof mostrarComentariosVideo === 'function') {
+                    mostrarComentariosVideo(card.dataset.ytId || card.dataset.nombre || card.id);
+                }
+
                 // Construir los botones de plataforma según qué columnas vinieron llenas
                 const plataformasDiv = document.getElementById('mpPlataformasVideo');
                 if (plataformasDiv) {
@@ -2411,7 +2497,7 @@
             if (videoYT) {
                 const track = document.getElementById('mpTrack');
                 const puntitos = document.getElementById('mpPuntitos');
-                track.innerHTML = `<iframe src="${videoYT}" style="width:100%;height:100%;min-height:280px;border:none;border-radius:12px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                track.innerHTML = `<div class="mp-video-wrapper aspecto-16-9"><iframe src="${videoYT}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
                 puntitos.innerHTML = '';
                 puntitos.style.display = 'none';
                 document.getElementById('mpFlechaIzq').classList.add('oculto');
@@ -2437,11 +2523,11 @@
             const track = document.getElementById('mpTrack');
             if (!track || !embed) return;
             if (tipo === 'youtube') {
-                track.innerHTML = `<iframe src="${embed}" style="width:100%;height:100%;min-height:280px;border:none;border-radius:12px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                track.innerHTML = `<div class="mp-video-wrapper aspecto-16-9"><iframe src="${embed}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
             } else if (tipo === 'facebook') {
-                track.innerHTML = `<iframe src="${embed}" style="width:100%;height:100%;min-height:280px;border:none;border-radius:12px;overflow:hidden;" scrolling="no" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+                track.innerHTML = `<div class="mp-video-wrapper aspecto-16-9"><iframe src="${embed}" scrolling="no" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe></div>`;
             } else if (tipo === 'instagram') {
-                track.innerHTML = `<iframe src="${embed}" style="width:100%;height:100%;min-height:480px;border:none;border-radius:12px;" allowtransparency="true" allowfullscreen="true"></iframe>`;
+                track.innerHTML = `<div class="mp-video-wrapper aspecto-9-16"><iframe src="${embed}" allowtransparency="true" allowfullscreen="true"></iframe></div>`;
             }
         }
 
@@ -3306,7 +3392,14 @@
             getDoc,
             setDoc,
             updateDoc,
-            serverTimestamp
+            serverTimestamp,
+            collection,
+            query,
+            orderBy,
+            limit,
+            onSnapshot,
+            addDoc,
+            deleteDoc
         } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         // Your web app's Firebase configuration
@@ -3433,7 +3526,148 @@
                 perfilUsuario.style.display  = 'none';
                 drawerHeaderTitulo.textContent = 'Inicia Sesión';
             }
+
+            actualizarFormularioComentario();
         });
+
+        // ═══════════════════════════════════════════════
+        //  COMENTARIOS PÚBLICOS DE CADA VIDEO
+        //  → /videos/{videoId}/comentarios/{comentarioId}
+        // ═══════════════════════════════════════════════
+        let videoIdComentariosActual = null;
+        let unsubscribeComentarios   = null;
+
+        function actualizarFormularioComentario() {
+            const form     = document.getElementById('mpComentarioForm');
+            const loginBtn = document.getElementById('mpComentarioLogin');
+            if (!form || !loginBtn) return;
+            if (auth.currentUser) {
+                form.style.display     = 'block';
+                loginBtn.style.display = 'none';
+            } else {
+                form.style.display     = 'none';
+                loginBtn.style.display = 'block';
+            }
+        }
+
+        function escaparHTMLComentario(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto || '';
+            return div.innerHTML;
+        }
+
+        function cargarComentariosVideo(idVideo) {
+            if (unsubscribeComentarios) { unsubscribeComentarios(); unsubscribeComentarios = null; }
+            const lista = document.getElementById('mpListaComentarios');
+            if (!lista) return;
+            lista.innerHTML = '<p class="mp-comentarios-vacio">Cargando comentarios...</p>';
+
+            const refComentarios = collection(db, 'videos', idVideo, 'comentarios');
+            const q = query(refComentarios, orderBy('creadoEn', 'desc'), limit(100));
+
+            unsubscribeComentarios = onSnapshot(q, (snap) => {
+                if (idVideo !== videoIdComentariosActual) return; // el modal cambió de video mientras tanto
+                if (snap.empty) {
+                    lista.innerHTML = '<p class="mp-comentarios-vacio">Sé el primero en comentar este video.</p>';
+                    return;
+                }
+                const usuarioActual = auth.currentUser;
+                lista.innerHTML = snap.docs.map(d => {
+                    const c = d.data();
+                    const fecha = (c.creadoEn && c.creadoEn.toDate)
+                        ? c.creadoEn.toDate().toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+                        : '';
+                    const puedeBorrar = usuarioActual && usuarioActual.uid === c.uid;
+                    return `
+                        <div class="mp-comentario-item">
+                            <img class="mp-comentario-avatar" src="${c.fotoPerfil || ''}" alt=""
+                                 onerror="this.style.visibility='hidden'">
+                            <div class="mp-comentario-cuerpo">
+                                <p class="mp-comentario-nombre">${escaparHTMLComentario(c.nombreUsuario || 'Usuario')}</p>
+                                <p class="mp-comentario-texto">${escaparHTMLComentario(c.texto)}</p>
+                                <p class="mp-comentario-fecha">${fecha}</p>
+                                ${puedeBorrar ? `<button class="mp-comentario-borrar" onclick="borrarComentarioVideo('${d.id}')">Borrar</button>` : ''}
+                            </div>
+                        </div>`;
+                }).join('');
+            }, (err) => {
+                console.error('Error al cargar comentarios:', err);
+                lista.innerHTML = '<p class="mp-comentarios-vacio">No se pudieron cargar los comentarios.</p>';
+            });
+        }
+
+        window.mostrarComentariosVideo = function (idVideo) {
+            const idLimpio = String(idVideo || 'video').replace(/\//g, '-').trim().slice(0, 150) || 'video';
+            videoIdComentariosActual = idLimpio;
+
+            const cont = document.getElementById('mpComentarios');
+            if (cont) cont.style.display = 'block';
+            actualizarFormularioComentario();
+            cargarComentariosVideo(idLimpio);
+        };
+
+        window.ocultarComentariosVideo = function () {
+            const cont = document.getElementById('mpComentarios');
+            if (cont) cont.style.display = 'none';
+            if (unsubscribeComentarios) { unsubscribeComentarios(); unsubscribeComentarios = null; }
+            videoIdComentariosActual = null;
+            const lista = document.getElementById('mpListaComentarios');
+            if (lista) lista.innerHTML = '';
+            const textarea = document.getElementById('mpComentarioTexto');
+            if (textarea) textarea.value = '';
+        };
+
+        window.enviarComentarioVideo = async function () {
+            const usuario = auth.currentUser;
+            if (!usuario || !videoIdComentariosActual) return;
+            const textarea = document.getElementById('mpComentarioTexto');
+            const texto = (textarea.value || '').trim();
+            if (!texto) return;
+            if (texto.length > 500) {
+                alert('El comentario es demasiado largo (máximo 500 caracteres).');
+                return;
+            }
+
+            const btn = document.getElementById('mpComentarioEnviar');
+            if (btn) btn.disabled = true;
+            try {
+                let nombreUsuario = usuario.displayName || 'Usuario';
+                let fotoPerfil    = usuario.photoURL || '';
+                try {
+                    const snapPerfil = await getDoc(doc(db, 'usuarios', usuario.uid));
+                    if (snapPerfil.exists()) {
+                        const datosPerfil = snapPerfil.data();
+                        nombreUsuario = datosPerfil.nombreUsuario || nombreUsuario;
+                        fotoPerfil    = datosPerfil.fotoPerfil || fotoPerfil;
+                    }
+                } catch (e) { /* si falla, usamos los datos de Google como respaldo */ }
+
+                await addDoc(collection(db, 'videos', videoIdComentariosActual, 'comentarios'), {
+                    uid: usuario.uid,
+                    texto: texto,
+                    nombreUsuario: nombreUsuario,
+                    fotoPerfil: fotoPerfil,
+                    creadoEn: serverTimestamp()
+                });
+                textarea.value = '';
+            } catch (err) {
+                console.error('Error al publicar el comentario:', err);
+                alert('No se pudo publicar tu comentario. Inténtalo de nuevo.');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        };
+
+        window.borrarComentarioVideo = async function (idComentario) {
+            if (!videoIdComentariosActual) return;
+            if (!confirm('¿Borrar este comentario?')) return;
+            try {
+                await deleteDoc(doc(db, 'videos', videoIdComentariosActual, 'comentarios', idComentario));
+            } catch (err) {
+                console.error('Error al borrar el comentario:', err);
+                alert('No se pudo borrar el comentario.');
+            }
+        };
     </script>
 
 </body>
