@@ -183,28 +183,6 @@
             color: var(--color-texto-suave, #666);
             font-weight: 500;
         }
-        /* ── BOTÓN VELAS KUKUMITA ── */
-        .btn-velas-kukumita {
-            display: block;
-            width: 100%;
-            height: 210px;
-            border-radius: 18px;
-            overflow: hidden;
-            text-decoration: none;
-            box-shadow: 0 6px 24px rgba(255,107,107,0.4);
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-        }
-        .btn-velas-kukumita:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(255,107,107,0.5);
-            opacity: 0.95;
-        }
-        body.modo-oscuro .btn-velas-kukumita {
-            box-shadow: 0 6px 24px rgba(255,107,107,0.2);
-        }
-        @media (max-width: 700px) {
-            .btn-velas-kukumita { height: auto; min-height: 120px; border-radius: 14px; }
-        }
         .grilla-familia {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1932,9 +1910,9 @@
 
     <div class="contenedor">
 
-        <!-- Banner victor-recuadro1 -->
+        <!-- Banner Polo Dancer -->
         <div style="margin: 0 0 0 0; width:100%; overflow:hidden;">
-            <img src="imagenes/victor-recuadro1.webp" alt="Polo Dancer"
+            <img src="imagenes/polodancer-recuadro1.webp" alt="Polo Dancer"
                  style="width:100%; display:block; object-fit:cover;"
                  onerror="this.style.display='none'">
         </div>
@@ -2913,7 +2891,7 @@
             const urlBase      = window.location.href.split('?')[0];
             urlCompartirActual = `${urlBase}?producto=${idProducto}`;
             const urlEncoded   = encodeURIComponent(urlCompartirActual);
-            const texto        = encodeURIComponent(`¡Mira esta figura de yeso: ${nombreProducto} en Yesos Polo Kukumita! 😍 `);
+            const texto        = encodeURIComponent(`¡Mira este video de El Polo Dancer: ${nombreProducto}! 😍 `);
 
             document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${texto}${urlEncoded}`;
             document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${urlEncoded}`;
@@ -3253,7 +3231,7 @@
             </div>
             <canvas id="qrCanvas" width="200" height="200"></canvas>
             <div class="modal-qr-url" id="qrUrlTexto"></div>
-            <button class="btn-copiar-qr" onclick="copiarURLZismo()" id="btnCopiarURL">
+            <button class="btn-copiar-qr" onclick="copiarURLElPoloDancer()" id="btnCopiarURL">
                 <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                 <span id="btnCopiarTexto">Copiar URL</span>
             </button>
@@ -3261,14 +3239,14 @@
     </div>
 
     <script>
-    // ═══ QR — URL fija (cambiar a polodancer.com cuando se adquiera el dominio) ═══
-    var URL_PAGINA_ZISMO = 'https://elpologr.github.io/zismo/';
+    // ═══ QR — URL de la página de El Polo Dancer ═══
+    var URL_PAGINA_ELPOLODANCER = 'https://elpolodancer.github.io/elpolodancer/';
 
     function abrirModalQR() {
-        var url = URL_PAGINA_ZISMO;
+        var url = URL_PAGINA_ELPOLODANCER;
         document.getElementById('qrUrlTexto').textContent = url;
         document.getElementById('modalQR').classList.add('abierto');
-        generarQRZismo(url);
+        generarQRElPoloDancer(url);
     }
     function cerrarModalQR() {
         document.getElementById('modalQR').classList.remove('abierto');
@@ -3276,7 +3254,7 @@
     document.getElementById('modalQR').addEventListener('click', function(e) {
         if (e.target === this) cerrarModalQR();
     });
-    function generarQRZismo(texto) {
+    function generarQRElPoloDancer(texto) {
         var canvas = document.getElementById('qrCanvas');
         var ctx = canvas.getContext('2d');
         var size = window.innerWidth >= 768 ? 320 : 200;
@@ -3297,8 +3275,8 @@
         };
         document.head.appendChild(script);
     }
-    async function copiarURLZismo() {
-        var url = URL_PAGINA_ZISMO;
+    async function copiarURLElPoloDancer() {
+        var url = URL_PAGINA_ELPOLODANCER;
         var span = document.getElementById('btnCopiarTexto');
         try {
             await navigator.clipboard.writeText(url);
@@ -3334,13 +3312,13 @@
         // Your web app's Firebase configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "AIzaSyA78ezVMSJ0gruMe6Xyp6Tn83BCBmoJIJY",
-            authDomain: "polodubstep-ab169.firebaseapp.com",
-            projectId: "polodubstep-ab169",
-            storageBucket: "polodubstep-ab169.firebasestorage.app",
-            messagingSenderId: "231781237672",
-            appId: "1:231781237672:web:aa761137049d1940d5539d",
-            measurementId: "G-PVL32Y7NV0"
+            apiKey: "AIzaSyA80l29AWAR3x1NCDoRPyhtM6c0JOYqoAA",
+            authDomain: "elpolodancer.firebaseapp.com",
+            projectId: "elpolodancer",
+            storageBucket: "elpolodancer.firebasestorage.app",
+            messagingSenderId: "397139900415",
+            appId: "1:397139900415:web:758cba48cba745d163d9ca",
+            measurementId: "G-8B85G46NDZ"
         };
 
         // Initialize Firebase
