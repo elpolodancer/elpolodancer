@@ -90,8 +90,8 @@
             justify-content: center;
             align-items: center;
             padding: 32px 16px 24px;
-            background: #fff;
-            border-bottom: 1px solid #eee;
+            background: transparent;
+            border-bottom: none;
         }
         .perfil-avatar-marco {
             width: 220px;
@@ -100,8 +100,8 @@
             max-height: 60vw;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-            border: 3px solid #e8e8e8;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+            border: 3px solid #fe2c55;
             flex-shrink: 0;
         }
         .perfil-avatar-img {
@@ -111,11 +111,11 @@
             display: block;
         }
         body.modo-oscuro .perfil-avatar-contenedor {
-            background: #121212;
-            border-bottom-color: #2a2a2a;
+            background: transparent;
+            border-bottom: none;
         }
         body.modo-oscuro .perfil-avatar-marco {
-            border-color: #333;
+            border-color: #fe2c55;
         }
 
         .contenedor {
@@ -1910,6 +1910,9 @@
 
     </div>
 
+    <!-- Título principal, arriba de la foto de perfil -->
+    <h1 class="seccion-titulo-bloque titulo-epico-polo" style="margin-top:32px;">El Polo Dancer</h1>
+
     <!-- Foto de perfil circular, justo debajo de la barra de redes sociales -->
     <div class="perfil-avatar-contenedor">
         <div class="perfil-avatar-marco">
@@ -1928,8 +1931,6 @@
 
         <!-- Wrapper relativo para poder anclar el botón al borde izquierdo real -->
         <div style="position:relative;">
-
-            <h1 class="seccion-titulo-bloque titulo-epico-polo" style="margin-top:48px;">El Polo Dancer</h1>
 
             <p class="subtitulo-epico-polo" style="margin-top:-4px;margin-bottom:30px;">
                 Bailarín Profesional de Morelia, Michoacán, México, en Popping Animation Dubstep
