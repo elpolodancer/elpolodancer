@@ -1936,6 +1936,26 @@
                 <p class="bio-parrafo">
                     Inicie a bailar en diciembre de 2014, vivía en un pueblo llamado Nuevo Urecho, en Michoacán, y no me gustaban las fiestas por que solo había música banda, y mis gustos eran solo Dubstep, asi que empecé a practicar algo llamado Tektonik, que antes se llamaba Milky Way y hoy en dia se llama Electro dance, sin embargo esto duro poco, por que en 2015 conocí a bailarines como Márquese Scott, Ditto, Popping Jhon, Less Twins y Fik Shun sobre todo, y de sus videos comencé a aprender y a hacer mis propios videos de como empezaba con mi propio baile.
                 </p>
+
+                <!-- Imagen de biografía -->
+                <div style="max-width:480px;margin:34px auto 0 auto;border-radius:18px;overflow:hidden;border:3px solid #fe2c55;box-shadow:0 8px 24px rgba(0,0,0,0.18);">
+                    <img src="imagenes/imgbio1.webp" alt="El Polo Dancer - inicios en el baile" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('div').style.display='none'">
+                </div>
+
+                <!-- Barra Seguir Viendo -->
+                <button type="button" id="btn-seguir-viendo" onclick="toggleSeguirViendo()" style="display:block;width:100%;max-width:480px;margin:18px auto 0 auto;padding:16px 24px;border-radius:0;border:2px solid #fe2c55;background:#fe2c55;color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;" onmouseover="this.style.background='#d81f43'" onmouseout="this.style.background='#fe2c55'">
+                    Seguir Viendo <span id="icono-seguir-viendo" style="display:inline-block;transition:transform 0.2s;">▾</span>
+                </button>
+
+                <!-- Contenido desplegable -->
+                <div id="zona-seguir-viendo" style="display:none;max-width:480px;margin:18px auto 0 auto;">
+                    <p class="bio-parrafo" style="text-align:left;">
+                        Publique unos videos mas o menos explicando mi historia e inicios en el baile, ademas de que contienen los mismos videos de mis inicios, los cuales me dan un poco de verguenza, pero actualmente se encuentran en modo privado, y si estas aquí considérate afortunado o maldecido, ya que aquí mismo puedes ver esos videos, ya que con los links insertados, Puedo hacer que se muestren aqui desde mi canal de youtube sin que se vean en mi canal de youtube, asi que aqui te dejo los 3 videos de casi media hora cada uno sobre mis inicios en el baile y mis primeros videos de baile.
+                    </p>
+                </div>
+
+                <!-- 3 videos de los inicios -->
+                <div class="grilla-productos" id="grilla-bio-videos" style="margin-top:18px;display:none;"></div>
             </div>
 
         </div>
@@ -2179,8 +2199,8 @@
                 document.getElementById('toggleOscuro').classList.remove('activo');
             }
 
-            // Videos abierto por defecto
-            mostrarSeccion('musica');
+            // Biografía abierta por defecto
+            mostrarSeccion('biografia');
         });
 
         // ═══════════════════════════════════════════════
@@ -2291,7 +2311,7 @@
             // Restablecer estilos de los 3 botones
             [btnBio, btnMus, btnProy].forEach(b => {
                 b.style.background   = '#fff';
-                b.style.borderColor  = '#fe2c55';
+                b.style.borderColor  = '#222';
                 b.style.color        = '#222';
             });
             btnBio.style.background = '#fff';
@@ -2317,6 +2337,58 @@
 
         function toggleBiografia() {
             mostrarSeccion('biografia');
+        }
+
+        // ═══════════════════════════════════════════════
+        //  BIOGRAFÍA — "SEGUIR VIENDO" (3 videos de los inicios)
+        // ═══════════════════════════════════════════════
+        const VIDEOS_INICIOS_BIO = [
+            { titulo: 'Mis inicios en el baile — Video 1', id: 'lR8phu0BzZw' },
+            { titulo: 'Mis inicios en el baile — Video 2', id: '3RoNfuhviDc' },
+            { titulo: 'Mis inicios en el baile — Video 3', id: 'YgaKLEsE9sw' }
+        ];
+
+        function cargarVideosIniciosBio() {
+            const grilla = document.getElementById('grilla-bio-videos');
+            if (!grilla || grilla.dataset.cargado) return;
+            grilla.innerHTML = '';
+            VIDEOS_INICIOS_BIO.forEach((v, i) => {
+                const card = document.createElement('div');
+                card.className = 'producto-card';
+                card.id = 'video-bio-' + (i + 1);
+                card.dataset.nombre      = v.titulo;
+                card.dataset.descripcion = '';
+                card.dataset.mediaTipo   = 'youtube';
+                card.dataset.ytEmbed     = `https://www.youtube.com/embed/${v.id}?autoplay=1`;
+                card.dataset.ytId        = v.id;
+                card.onclick = function () { abrirFichaProducto(card); };
+                card.innerHTML = `
+                    <img class="producto-img" src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="${v.titulo}" onerror="this.style.background='#111'">
+                    <div class="producto-info">
+                        <h3 class="producto-titulo">${v.titulo}</h3>
+                    </div>
+                    <div class="producto-card-hint">Toca para ver el video</div>
+                `;
+                grilla.appendChild(card);
+            });
+            grilla.dataset.cargado = '1';
+        }
+
+        function toggleSeguirViendo() {
+            const zona   = document.getElementById('zona-seguir-viendo');
+            const grilla = document.getElementById('grilla-bio-videos');
+            const icono  = document.getElementById('icono-seguir-viendo');
+            const abierto = zona.style.display !== 'none';
+            if (abierto) {
+                zona.style.display   = 'none';
+                grilla.style.display = 'none';
+                icono.style.transform = 'rotate(0deg)';
+            } else {
+                zona.style.display   = 'block';
+                grilla.style.display = 'grid';
+                icono.style.transform = 'rotate(180deg)';
+                cargarVideosIniciosBio();
+            }
         }
 
         function abrirFichaProducto(card) {
@@ -2440,8 +2512,8 @@
         //  VIDEOS — GOOGLE SHEETS (zona de Videos)
         // ═══════════════════════════════════════════════
         // Columnas esperadas en la hoja: Titulo | Descripcion | Fecha | Link youtube | enbeed facebook | enbeed instagram
-        const SHEET_ID_VIDEOS  = '1W1yux5rQaNlPjufGy2OFQQJxoXtDaXeSgeQTywoxpu4';
-        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+        const SHEET_ID_VIDEOS  = '1-WmG7Xp0hus6InSJ8tLQpcietG2t8zAt7A9b9zk_Vzc';
+        const SHEET_URL_VIDEOS = `https://docs.google.com/spreadsheets/d/${SHEET_ID_VIDEOS}/gviz/tq?tqx=out:csv`;
 
         // Parser de CSV con detección automática de delimitador (tabulador o coma)
         function parsearCSVVideos(texto) {
@@ -3223,13 +3295,13 @@
         // Your web app's Firebase configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "AIzaSyA80l29AWAR3x1NCDoRPyhtM6c0JOYqoAA",
-            authDomain: "elpolodancer.firebaseapp.com",
-            projectId: "elpolodancer",
-            storageBucket: "elpolodancer.firebasestorage.app",
-            messagingSenderId: "397139900415",
-            appId: "1:397139900415:web:758cba48cba745d163d9ca",
-            measurementId: "G-8B85G46NDZ"
+            apiKey: "AIzaSyA78ezVMSJ0gruMe6Xyp6Tn83BCBmoJIJY",
+            authDomain: "polodubstep-ab169.firebaseapp.com",
+            projectId: "polodubstep-ab169",
+            storageBucket: "polodubstep-ab169.firebasestorage.app",
+            messagingSenderId: "231781237672",
+            appId: "1:231781237672:web:aa761137049d1940d5539d",
+            measurementId: "G-PVL32Y7NV0"
         };
 
         // Initialize Firebase
