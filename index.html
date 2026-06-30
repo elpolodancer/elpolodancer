@@ -1367,7 +1367,12 @@
             width: 300px;
             max-width: 85vw;
             height: 100%;
-            background: #fff;
+            background-color: #1e1530;
+            background-image:
+                radial-gradient(circle at 15% 10%, rgba(255, 140, 190, 0.26) 0%, transparent 55%),
+                radial-gradient(circle at 85% 90%, rgba(90, 140, 230, 0.28) 0%, transparent 55%),
+                linear-gradient(160deg, #241934 0%, #1c1530 50%, #161228 100%);
+            color: #f0e8ee;
             z-index: 2001;
             display: flex;
             flex-direction: column;
@@ -1400,23 +1405,23 @@
             align-items: center;
             justify-content: space-between;
             padding: 18px 16px 12px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
             flex-shrink: 0;
         }
         .drawer-header-titulo { font-size: 17px; font-weight: 700; color: var(--color-texto); }
         .btn-cerrar-drawer {
             background: none; border: none; font-size: 22px;
-            cursor: pointer; color: #666; padding: 4px 8px; border-radius: 6px;
+            cursor: pointer; color: #d8c8d2; padding: 4px 8px; border-radius: 6px;
         }
-        .btn-cerrar-drawer:hover { background: #f0f0f0; }
+        .btn-cerrar-drawer:hover { background: rgba(255,255,255,0.08); }
 
         .drawer-perfil {
             display: flex; align-items: center; gap: 12px;
-            padding: 16px; background: #fafafa;
-            border-bottom: 1px solid #eee;
+            padding: 16px; background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
             cursor: pointer; transition: background 0.2s;
         }
-        .drawer-perfil:hover { background: #f0f0f0; }
+        .drawer-perfil:hover { background: rgba(255,255,255,0.08); }
         .drawer-avatar {
             width: 48px; height: 48px; border-radius: 50%;
             background: #ddd; object-fit: cover;
@@ -1476,15 +1481,15 @@
 
         .drawer-espaciador { flex: 1; min-height: 20px; }
 
-        .drawer-config { padding: 16px; border-top: 1px solid #eee; flex-shrink: 0; }
+        .drawer-config { padding: 16px; border-top: 1px solid rgba(255,255,255,0.12); flex-shrink: 0; }
         .btn-drawer-config {
             display: flex; align-items: center; gap: 10px;
             width: 100%; padding: 11px 14px;
-            background: #f5f5f5; border: none; border-radius: 10px;
+            background: rgba(255,255,255,0.06); border: none; border-radius: 10px;
             font-size: 14px; font-weight: 600; color: var(--color-texto-medio);
             cursor: pointer; transition: background 0.2s; text-align: left;
         }
-        .btn-drawer-config:hover { background: #ffe8ec; color: #fe2c55; }
+        .btn-drawer-config:hover { background: rgba(254,44,85,0.18); color: #fe2c55; }
         .btn-drawer-config .icono { font-size: 18px; }
 
         .drawer-subpanel { display: none; padding: 0 16px 12px; animation: fadeIn 0.2s ease; }
@@ -1494,11 +1499,11 @@
         .drawer-sub-btn {
             display: flex; align-items: center; gap: 10px;
             width: 100%; padding: 10px 12px;
-            background: none; border: 1px solid #eee; border-radius: 8px;
-            font-size: 13px; font-weight: 600; color: #444;
+            background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+            font-size: 13px; font-weight: 600; color: #e6d8e2;
             cursor: pointer; margin-bottom: 8px; transition: all 0.2s; text-align: left;
         }
-        .drawer-sub-btn:hover { background: #fff0f3; border-color: #fe2c55; color: #fe2c55; }
+        .drawer-sub-btn:hover { background: rgba(254,44,85,0.15); border-color: #fe2c55; color: #fe2c55; }
 
         .drawer-subsubpanel {
             display: none; padding: 8px 0 4px 12px;
@@ -1506,13 +1511,13 @@
             animation: fadeIn 0.2s ease;
         }
         .drawer-subsubpanel.visible { display: block; }
-        .drawer-subsubpanel .drawer-sub-btn { font-size: 12px; padding: 8px 10px; color: #555; }
+        .drawer-subsubpanel .drawer-sub-btn { font-size: 12px; padding: 8px 10px; color: #cbbcc6; }
 
         .toggle-modo {
             display: flex; align-items: center; justify-content: space-between;
             width: 100%; padding: 10px 12px;
-            background: none; border: 1px solid #eee; border-radius: 8px;
-            font-size: 13px; font-weight: 600; color: #444;
+            background: none; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+            font-size: 13px; font-weight: 600; color: #e6d8e2;
             cursor: pointer; margin-bottom: 8px;
         }
         .toggle-interruptor {
@@ -1834,24 +1839,7 @@
             <span class="drawer-perfil-flecha">›</span>
         </div>
 
-        <!-- Búsqueda -->
-        <div class="drawer-seccion">
-            <p class="drawer-seccion-titulo">🔍 Buscar producto</p>
-            <div class="drawer-busqueda-fila">
-                <input type="text" id="drawerInputBusqueda" class="drawer-input-busqueda"
-                       placeholder="Ej: virgen, osito..."
-                       onkeydown="if(event.key==='Enter') ejecutarBusqueda()">
-                <button class="btn-buscar" onclick="ejecutarBusqueda()">Buscar</button>
-            </div>
-        </div>
-
         <!-- Resultados / recomendaciones -->
-        <div class="drawer-recomendaciones" id="drawerResultados">
-            <p class="drawer-rec-titulo" id="drawerRecTitulo">Sugerencias</p>
-            <div id="drawerListaResultados"></div>
-            <p class="drawer-sin-resultados" id="drawerSinResultados">Sin resultados para tu búsqueda.</p>
-        </div>
-
         <div class="drawer-espaciador"></div>
 
         <!-- Configuración -->
@@ -2117,10 +2105,6 @@
         function abrirDrawer() {
             document.getElementById('drawer').classList.add('activo');
             document.getElementById('drawerOverlay').classList.add('activo');
-            // Mostrar sugerencias iniciales al abrir si aún no se buscó
-            if (!document.getElementById('drawerResultados').classList.contains('visible')) {
-                mostrarSugerenciasIniciales();
-            }
         }
         function cerrarDrawer() {
             document.getElementById('drawer').classList.remove('activo');
@@ -2152,78 +2136,6 @@
         }
         function cerrarSubpanel(id) {
             document.getElementById(id).classList.remove('visible');
-        }
-
-        // ═══════════════════════════════════════════════
-        //  DRAWER — BÚSQUEDA
-        // ═══════════════════════════════════════════════
-        function obtenerProductos() {
-            return Array.from(document.querySelectorAll('.producto-card')).map(card => ({
-                id: card.id,
-                nombre: card.dataset.nombre || '',
-                precio: card.dataset.precioTexto || '',
-                categoria: card.dataset.categoria || '',
-                img: card.querySelector('.producto-img')?.src || '',
-                card: card
-            }));
-        }
-
-        function mostrarSugerenciasIniciales() {
-            const productos = obtenerProductos();
-            // Mostrar los primeros 3 como sugerencias iniciales
-            const sugerencias = productos.slice(0, 3);
-            renderizarResultados(sugerencias, 'Productos destacados');
-        }
-
-        function ejecutarBusqueda() {
-            const query = document.getElementById('drawerInputBusqueda').value.trim().toLowerCase();
-            const productos = obtenerProductos();
-            if (!query) {
-                mostrarSugerenciasIniciales();
-                return;
-            }
-            const resultados = productos.filter(p =>
-                p.nombre.toLowerCase().includes(query) ||
-                p.categoria.toLowerCase().includes(query)
-            );
-            // La primera línea siempre será la mejor coincidencia y también la próxima sugerencia
-            renderizarResultados(resultados, `Resultados para "${query}"`);
-        }
-
-        function renderizarResultados(lista, titulo) {
-            const contenedor = document.getElementById('drawerResultados');
-            const listaEl = document.getElementById('drawerListaResultados');
-            const sinRes = document.getElementById('drawerSinResultados');
-            const tituloEl = document.getElementById('drawerRecTitulo');
-
-            contenedor.classList.add('visible');
-            tituloEl.textContent = titulo;
-            listaEl.innerHTML = '';
-            sinRes.style.display = 'none';
-
-            if (lista.length === 0) {
-                sinRes.style.display = 'block';
-                return;
-            }
-            // Mostrar máximo 3
-            lista.slice(0, 3).forEach(p => {
-                const item = document.createElement('div');
-                item.className = 'drawer-rec-item';
-                item.innerHTML = `
-                    <img class="drawer-rec-img" src="${p.img}" alt="${p.nombre}" onerror="this.style.background='#eee'">
-                    <div class="drawer-rec-info">
-                        <p class="drawer-rec-nombre">${p.nombre}</p>
-                        <p class="drawer-rec-precio">${p.precio}</p>
-                    </div>
-                    <span style="color:#bbb;">›</span>
-                `;
-                item.onclick = () => {
-                    cerrarDrawer();
-                    p.card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => abrirFichaProducto(p.card), 400);
-                };
-                listaEl.appendChild(item);
-            });
         }
 
         // ═══════════════════════════════════════════════
