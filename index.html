@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-texto:       #111;
-            --color-texto-medio: #333;
-            --color-texto-suave: #666;
-            --color-fondo:       #fff;
-            --color-fondo-suave: #fafafa;
-            --color-borde:       #eee;
+            --color-texto:       #f4eef1;
+            --color-texto-medio: #ddccd6;
+            --color-texto-suave: #b9a3b1;
+            --color-fondo:       #1c0f1a;
+            --color-fondo-suave: #2a1626;
+            --color-borde:       #4a2a42;
         }
         body.modo-oscuro {
             --color-texto:       #f0f0f0;
@@ -23,19 +23,34 @@
             --color-fondo:       #121212;
             --color-fondo-suave: #1e1e1e;
             --color-borde:       #333333;
+            background-image: none;
+            background-color: #121212;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #2a1530;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(190, 60, 95, 0.38) 0%, transparent 50%),
+                radial-gradient(circle at 88% 12%, rgba(130, 55, 165, 0.38) 0%, transparent 52%),
+                radial-gradient(circle at 80% 85%, rgba(170, 45, 80, 0.34) 0%, transparent 55%),
+                radial-gradient(circle at 15% 88%, rgba(110, 50, 140, 0.34) 0%, transparent 55%),
+                linear-gradient(155deg, #321a3a 0%, #3a1730 28%, #2e1432 55%, #3a1626 75%, #2a1228 100%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
             color: var(--color-texto-medio);
         }
         
         /* Barra de Redes */
         .barra-redes {
-            background-color: #111;
+            background-color: #1a1030;
+            background-image:
+                radial-gradient(circle at 10% 30%, rgba(255, 120, 170, 0.28) 0%, transparent 55%),
+                radial-gradient(circle at 90% 30%, rgba(80, 130, 220, 0.30) 0%, transparent 55%),
+                linear-gradient(100deg, #241432 0%, #1c1330 50%, #14152e 100%);
             color: white;
             padding: 10px 20px;
             text-align: right;
@@ -141,6 +156,8 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #ffffff;
+            paint-order: stroke fill;
             color: #111;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.08);
         }
@@ -149,6 +166,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #ffffff;
         }
         .subtitulo-epico-polo {
             text-align: center;
@@ -1573,8 +1591,12 @@
             gap: 8px;
             flex-wrap: wrap;
             padding: 14px 16px;
-            background: #fff;
-            border-bottom: 1px solid #eee;
+            background-color: #14182e;
+            background-image:
+                radial-gradient(circle at 8% 50%, rgba(255, 130, 180, 0.30) 0%, transparent 55%),
+                radial-gradient(circle at 92% 50%, rgba(90, 140, 230, 0.32) 0%, transparent 55%),
+                linear-gradient(100deg, #1c1d36 0%, #181a30 50%, #16182c 100%);
+            border-bottom: 1px solid #3a3a5a;
         }
         .red-social {
             display: flex;
@@ -1948,7 +1970,7 @@
                 </button>
 
                 <!-- Contenido desplegable -->
-                <div id="zona-seguir-viendo" style="display:none;max-width:480px;margin:18px auto 0 auto;">
+                <div id="zona-seguir-viendo" style="display:none;width:100%;margin:18px 0 0 0;">
                     <p class="bio-parrafo" style="text-align:left;">
                         Publique unos videos mas o menos explicando mi historia e inicios en el baile, ademas de que contienen los mismos videos de mis inicios, los cuales me dan un poco de verguenza, pero actualmente se encuentran en modo privado, y si estas aquí considérate afortunado o maldecido, ya que aquí mismo puedes ver esos videos, ya que con los links insertados, Puedo hacer que se muestren aqui desde mi canal de youtube sin que se vean en mi canal de youtube, asi que aqui te dejo los 3 videos de casi media hora cada uno sobre mis inicios en el baile y mis primeros videos de baile.
                     </p>
@@ -1956,6 +1978,28 @@
 
                 <!-- 3 videos de los inicios -->
                 <div class="grilla-productos" id="grilla-bio-videos" style="margin-top:18px;display:none;"></div>
+
+                <!-- ═══ Sobre el Desarrollo Web ═══ -->
+                <p class="bio-parrafo" style="font-weight:700;margin-top:40px;margin-bottom:6px;">
+                    Sobre el Desarrollo Web:
+                </p>
+                <p class="bio-parrafo">
+                    Termine de Aprender sobre Desarrollo Web en 2026, esta misma pagina fue creada por mi, El Polo Dancer, aunque claro, mi nombre Profesional en el Desarrollo Web es El Polo Network, aquí puedes encontrar todos mis proyectos profesionales y diversas redes sociales, pero lo escencial es saber como manejo mis paginas web en caso de que alguno desee adquirir una pagina web atravez de mis servicios, da click en el siguiente boton para ver mi pagina web profecional y veas otras paginas web de referencia que he creado para que te des una idea de lo que abarcan mis servicios:
+                </p>
+
+                <!-- Banner / Botón hacia El Polo Network -->
+                <a href="https://elpologr.github.io/elpolo/" target="_blank" rel="noopener" style="display:block;max-width:480px;margin:24px auto 0 auto;border-radius:18px;overflow:hidden;border:3px solid #fe2c55;box-shadow:0 8px 24px rgba(0,0,0,0.18);cursor:pointer;transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.015)';this.style.boxShadow='0 10px 28px rgba(0,0,0,0.28)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.18)'">
+                    <img src="imagenes/bannerweb.webp" alt="El Polo Network - Desarrollo Web" style="width:100%;display:block;object-fit:cover;" onerror="this.closest('a').style.display='none'">
+                </a>
+
+                <!-- Barra Seguir Viendo (Desarrollo Web) -->
+                <button type="button" id="btn-seguir-viendo-web" onclick="toggleSeguirViendoWeb()" style="display:block;width:100%;max-width:480px;margin:18px auto 0 auto;padding:16px 24px;border-radius:0;border:2px solid #fe2c55;background:#fe2c55;color:#fff;font-size:17px;font-weight:700;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;" onmouseover="this.style.background='#d81f43'" onmouseout="this.style.background='#fe2c55'">
+                    Seguir Viendo <span id="icono-seguir-viendo-web" style="display:inline-block;transition:transform 0.2s;">▾</span>
+                </button>
+
+                <!-- Contenido desplegable (Desarrollo Web) -->
+                <div id="zona-seguir-viendo-web" style="display:none;width:100%;margin:18px 0 0 0;">
+                </div>
             </div>
 
         </div>
@@ -2388,6 +2432,22 @@
                 grilla.style.display = 'grid';
                 icono.style.transform = 'rotate(180deg)';
                 cargarVideosIniciosBio();
+            }
+        }
+
+        // ═══════════════════════════════════════════════
+        //  BIOGRAFÍA — "SEGUIR VIENDO" (Sobre el Desarrollo Web)
+        // ═══════════════════════════════════════════════
+        function toggleSeguirViendoWeb() {
+            const zona  = document.getElementById('zona-seguir-viendo-web');
+            const icono = document.getElementById('icono-seguir-viendo-web');
+            const abierto = zona.style.display !== 'none';
+            if (abierto) {
+                zona.style.display    = 'none';
+                icono.style.transform = 'rotate(0deg)';
+            } else {
+                zona.style.display    = 'block';
+                icono.style.transform = 'rotate(180deg)';
             }
         }
 
